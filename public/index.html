@@ -136,13 +136,7 @@ function init() {
   console.log('setRenderer size', window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
-
-  // clipping
-  let clippingPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-  renderer.clippingPlanes = [clippingPlane];
-  // helper to visualize the clipping plane
-  let planeHelper = new THREE.PlaneHelper(clippingPlane, PLANE_HELPER_SIZE, PLANE_HELPER_COLOR);
-  scene.add(planeHelper);
+  renderer.localClippingEnabled = true;
 
   canvas = renderer.domElement;
   document.body.appendChild(canvas);
@@ -299,6 +293,17 @@ function onClick () {
   clone.quaternion.copy(ori);
 
   var modelClone = model.clone();
+  // have my own material
+  modelClone.material = new THREE.MeshPhongMaterial();
+  console.log(pos.y);
+  var localPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), pos.y + LOCAL_PLANE_DISTANCE);
+  modelClone.children.forEach(function(mesh){mesh.material.clippingPlanes = [localPlane];});
+  modelClone.material.clipShadows = false;
+
+  // helper to visualize the clipping plane
+  let planeHelper = new THREE.PlaneHelper(localPlane, PLANE_HELPER_SIZE, PLANE_HELPER_COLOR);
+  scene.add(planeHelper);
+
   scene.add(modelClone);
   modelClone.position.copy(pos);
   modelClone.quaternion.copy(ori);
