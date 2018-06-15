@@ -92,6 +92,10 @@ var OBJ_PATH = './assets/bunny_superLow.obj';
 // var MTL_PATH = '';
 var SCALE = 0.1;
 
+var LOCAL_PLANE_DISTANCE = 0.1;
+var PLANE_HELPER_SIZE = 0.3;
+var PLANE_HELPER_COLOR = 0xffff00;
+
 var colors = [
   new THREE.Color( 0xffffff ),
   new THREE.Color( 0xffff00 ),
@@ -120,6 +124,8 @@ THREE.ARUtils.getARDisplay().then(function (display) {
 });
 
 function init() {
+  scene = new THREE.Scene();
+
   // Turn on the debugging panel
   var arDebug = new THREE.ARDebug(vrDisplay);
   document.body.appendChild(arDebug.getElement());
@@ -130,9 +136,16 @@ function init() {
   console.log('setRenderer size', window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
+
+  // clipping
+  let clippingPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
+  renderer.clippingPlanes = [clippingPlane];
+  // helper to visualize the clipping plane
+  let planeHelper = new THREE.PlaneHelper(clippingPlane, PLANE_HELPER_SIZE, PLANE_HELPER_COLOR);
+  scene.add(planeHelper);
+
   canvas = renderer.domElement;
   document.body.appendChild(canvas);
-  scene = new THREE.Scene();
 
   // Creating the ARView, which is the object that handles
   // the rendering of the camera stream behind the three.js
