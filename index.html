@@ -87,6 +87,9 @@ var scene;
 var renderer;
 var cube;
 
+var OBJ_PATH = './assets/bunny_superLow.obj';
+// var MTL_PATH = '';
+
 var colors = [
   new THREE.Color( 0xffffff ),
   new THREE.Color( 0xffff00 ),
@@ -165,6 +168,26 @@ function init() {
   }
   var material = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
   cube = new THREE.Mesh(geometry, material);
+
+
+  THREE.ARUtils.loadModel({
+    objPath: OBJ_PATH,
+    mtlPath: undefined,
+    OBJLoader: undefined, // uses window.THREE.OBJLoader by default
+    MTLLoader: undefined, // uses window.THREE.MTLLoader by default
+  }).then(function(group) {
+    model = group;
+    // As OBJ models may contain a group with several meshes,
+    // we want all of them to cast shadow
+    model.children.forEach(function(mesh) { mesh.castShadow = true; });
+
+    model.scale.set(SCALE, SCALE, SCALE);
+
+    // Place the model very far to initialize
+    model.position.set(10000, 10000, 10000);
+    scene.add(model);
+  });
+
 
   // Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
@@ -254,6 +277,11 @@ function onClick () {
   scene.add(clone);
   clone.position.copy(pos);
   clone.quaternion.copy(ori);
+
+  var modelClone = model.clone();
+  scene.add(modelClone);
+  modelClone.position.copy(pos);
+  modelClone.quaternion.copy(ori);
 }
 </script>
 </body>
