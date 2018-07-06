@@ -301,12 +301,12 @@ function onClick () {
   push.transformDirection(dirMtx);
   pos.addScaledVector(push, 0.125);
 
-  // Clone our cube object and place it at the camera's
-  // current position
-  var clone = cube.clone();
-  scene.add(clone);
-  clone.position.copy(pos);
-  clone.quaternion.copy(ori);
+  // Clone our cube object and place it at the camera's current position
+  var cubeClone = cube.clone();
+  cubeClone.material = cube.material.clone(); // have own material to have own clipping planes.
+  cubeClone.position.copy(pos);
+  cubeClone.quaternion.copy(ori);
+  scene.add(cubeClone);
 
   var modelClone = model.clone();
   modelClone.position.copy(pos);
@@ -318,10 +318,17 @@ function onClick () {
   dummyPlaneMeshClone.position.copy(pos);
   scene.add(dummyPlaneMeshClone);
 
+  var localClippingPlane = new THREE.Plane();
 
-  // var constant = dummyPlaneMeshClone.position.length();
-  //
-  // var localClippingPlane = new THREE.Plane(normal, constant);
+  var coplanarPointA = dummyPlaneMeshClone.geometry.vertices[0].clone().applyQuaternion(dummyPlaneMeshClone.quaternion).add(dummyPlaneMeshClone.position);
+  var coplanarPointB = dummyPlaneMeshClone.geometry.vertices[1].clone().applyQuaternion(dummyPlaneMeshClone.quaternion).add(dummyPlaneMeshClone.position);
+  var coplanarPointC = dummyPlaneMeshClone.geometry.vertices[2].clone().applyQuaternion(dummyPlaneMeshClone.quaternion).add(dummyPlaneMeshClone.position);
+
+  localClippingPlane.setFromCoplanarPoints(coplanarPointA, coplanarPointC, coplanarPointB); // counter-clockwise
+
+  // clipping planes
+  cubeClone.material.clippingPlanes = [localClippingPlane];
+
   //
   // modelClone.children.forEach(function(mesh){
   //   // have my own material
