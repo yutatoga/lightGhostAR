@@ -329,13 +329,12 @@ function onClick () {
   // clipping planes
   cubeClone.material.clippingPlanes = [localClippingPlane];
 
-  //
-  // modelClone.children.forEach(function(mesh){
-  //   // have my own material
-  //   mesh.material = new THREE.MeshPhongMaterial();
-  //   mesh.material.clippingPlanes = [localClippingPlane];
-  //   mesh.material.clipShadows = false;
-  // });
+  modelClone.children.forEach(function(mesh){
+    // have own material to have own clipping plane.
+    mesh.material = new THREE.MeshPhongMaterial();
+    mesh.material.clippingPlanes = [localClippingPlane];
+    mesh.material.clipShadows = false;
+  });
 
   scene.add(modelClone);
 }
