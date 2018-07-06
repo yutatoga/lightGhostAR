@@ -87,6 +87,7 @@ var camera;
 var scene;
 var renderer;
 var cube;
+var dummyPlaneMesh;
 
 var OBJ_PATH = './assets/bunny_superLow.obj';
 // var MTL_PATH = '';
@@ -202,6 +203,21 @@ function init() {
     scene.add(model);
   });
 
+  // dummy dummyPlaneMesh
+  var dummyPlaneGeometry = new THREE.PlaneGeometry(1, 1, 1, 1);
+  var dummyPlaneMaterial = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0.5,
+    wireframe: true,
+    color: 0x00ff00,
+    side: THREE.DoubleSide
+  });
+  dummyPlaneMesh = new THREE.Mesh(dummyPlaneGeometry, dummyPlaneMaterial);
+  dummyPlaneMesh.scale.set(SCALE, SCALE, SCALE);
+
+  // Place the dummy plane very far to initialize
+  dummyPlaneMesh.position.set(10000, 10000, 10000);
+  scene.add(dummyPlaneMesh);
 
   // Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
@@ -296,22 +312,23 @@ function onClick () {
   modelClone.position.copy(pos);
   modelClone.quaternion.copy(ori);
 
-  var normal = new THREE.Vector3();
-  normal.set(0, -1, 0).applyQuaternion(ori).normalize();
-  var constant = pos.length();
+  // copy the state of pose to dummy plane mesh's state
+  var dummyPlaneMeshClone = dummyPlaneMesh.clone();
+  dummyPlaneMeshClone.quaternion.copy(ori);
+  dummyPlaneMeshClone.position.copy(pos);
+  scene.add(dummyPlaneMeshClone);
 
-  var localPlane = new THREE.Plane(normal, constant);
 
-  modelClone.children.forEach(function(mesh){
-    // have my own material
-    mesh.material = new THREE.MeshPhongMaterial();
-    mesh.material.clippingPlanes = [localPlane];
-    mesh.material.clipShadows = false;
-  });
-
-  // helper to visualize the clipping plane
-  let planeHelper = new THREE.PlaneHelper(localPlane, PLANE_HELPER_SIZE, PLANE_HELPER_COLOR);
-  scene.add(planeHelper);
+  // var constant = dummyPlaneMeshClone.position.length();
+  //
+  // var localClippingPlane = new THREE.Plane(normal, constant);
+  //
+  // modelClone.children.forEach(function(mesh){
+  //   // have my own material
+  //   mesh.material = new THREE.MeshPhongMaterial();
+  //   mesh.material.clippingPlanes = [localClippingPlane];
+  //   mesh.material.clipShadows = false;
+  // });
 
   scene.add(modelClone);
 }
