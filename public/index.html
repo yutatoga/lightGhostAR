@@ -324,7 +324,7 @@ function onClick () {
   var coplanarPointB = dummyPlaneMeshClone.geometry.vertices[1].clone().applyQuaternion(dummyPlaneMeshClone.quaternion).add(dummyPlaneMeshClone.position);
   var coplanarPointC = dummyPlaneMeshClone.geometry.vertices[2].clone().applyQuaternion(dummyPlaneMeshClone.quaternion).add(dummyPlaneMeshClone.position);
 
-  localClippingPlane.setFromCoplanarPoints(coplanarPointA, coplanarPointC, coplanarPointB); // counter-clockwise
+  localClippingPlane.setFromCoplanarPoints(coplanarPointA, coplanarPointB, coplanarPointC); // counter-clockwise
 
   // clipping planes
   cubeClone.material.clippingPlanes = [localClippingPlane];
