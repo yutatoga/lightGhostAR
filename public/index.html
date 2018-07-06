@@ -333,7 +333,7 @@ function onClick () {
     mesh.material.clipShadows = false;
 
     var meshInside = mesh.clone();
-    meshInside.material = new THREE.MeshBasicMaterial();
+    meshInside.material = new THREE.MeshBasicMaterial({ side: THREE.BackSide });
     meshInside.material.clippingPlanes = [localClippingPlane];
     meshInside.material.clipShadows = false;
     modelClone.add(meshInside);
