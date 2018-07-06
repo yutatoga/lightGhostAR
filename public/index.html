@@ -331,6 +331,12 @@ function onClick () {
     mesh.material = new THREE.MeshPhongMaterial();
     mesh.material.clippingPlanes = [localClippingPlane];
     mesh.material.clipShadows = false;
+
+    var meshInside = mesh.clone();
+    meshInside.material = new THREE.MeshBasicMaterial();
+    meshInside.material.clippingPlanes = [localClippingPlane];
+    meshInside.material.clipShadows = false;
+    modelClone.add(meshInside);
   });
 
   scene.add(modelClone);
