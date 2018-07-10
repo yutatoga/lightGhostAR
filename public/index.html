@@ -76,6 +76,7 @@
 <body>
 <div id="background">
   <div id="containerWebGLRenderer">
+    <div id="containerARDebug"></div>
     <div id="info">
       <span class="title">Tap to spawn objects at camera position.</span><br/>
       <span class="links">
@@ -163,7 +164,7 @@ function init() {
     showPoseStatus: true,
     showPlanes: false
   });
-  document.body.appendChild(arDebug.getElement());
+  document.getElementById('containerARDebug').appendChild(arDebug.getElement());
 
   // Setup the three.js rendering environment
   renderer = new THREE.WebGLRenderer({ alpha: true });
