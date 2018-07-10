@@ -86,6 +86,21 @@
   </div>
 </div>
 
+<!-- firebase -->
+<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+<script>
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyDHYzlkaWqxVBpLejpkpMQ7yjShZdVEONw",
+  authDomain: "lightghostar.firebaseapp.com",
+  databaseURL: "https://lightghostar.firebaseio.com",
+  projectId: "lightghostar",
+  storageBucket: "lightghostar.appspot.com",
+  messagingSenderId: "678263276889"
+};
+firebase.initializeApp(config);
+</script>
+
 <script src="/js/three.js"></script>
 <script src="/js/VRControls.js"></script>
 <script src="/js/OBJLoader.js"></script>
@@ -102,6 +117,7 @@ var canvas;
 var camera;
 var scene;
 var renderer;
+var light;
 var cube;
 var dummyPlaneMesh;
 
@@ -179,7 +195,7 @@ function init() {
   vrControls = new THREE.VRControls(camera);
 
   // light
-  var light = new THREE.DirectionalLight(0xffffff);
+  light = new THREE.DirectionalLight(0xffffff);
   light.position.set(0, 1, 0);
   scene.add(light);
 
@@ -235,6 +251,13 @@ function init() {
   // Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
   canvas.addEventListener('touchstart', onClick, false);
+
+  // firebase
+  var intensityRef = firebase.database().ref('light/intensity');
+  intensityRef.on('value', function(snapshot) {
+    console.log('Firebase: light/intensity', snapshot.val());
+    light.intensity = snapshot.val();
+  });
 
   // Kick off the render loop!
   update();
