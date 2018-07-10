@@ -157,7 +157,12 @@ function init() {
   scene = new THREE.Scene();
 
   // Turn on the debugging panel
-  var arDebug = new THREE.ARDebug(vrDisplay);
+  var arDebug = new THREE.ARDebug(vrDisplay, scene, {
+    open: true,
+    showLastHit: true,
+    showPoseStatus: true,
+    showPlanes: false
+  });
   document.body.appendChild(arDebug.getElement());
 
   // Setup the three.js rendering environment
