@@ -265,6 +265,18 @@ function init() {
     light.intensity = snapshot.val();
   });
 
+  var enableShootingModeRef = firebase.database().ref('enableShootingMode');
+  enableShootingModeRef.on('value', function(snapshot) {
+    if(snapshot.val()){
+      document.getElementById("containerARDebug").style.display = "none";
+      document.getElementById("info").style.display = "none";
+    }else{
+      document.getElementById("containerARDebug").style.display = "inline";
+      document.getElementById("info").style.display = "inline";
+    }
+  });
+
+
   // Kick off the render loop!
   update();
 }
