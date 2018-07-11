@@ -119,7 +119,7 @@ var camera;
 var scene;
 var renderer;
 var light;
-var cube;
+var cube, cubeGroup;
 var dummyPlaneMesh;
 
 var OBJ_PATH = './assets/bunny_superLow.obj';
@@ -219,6 +219,8 @@ function init() {
   var material = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
   cube = new THREE.Mesh(geometry, material);
 
+  cubeGroup = new THREE.Group();
+  scene.add(cubeGroup);
 
   THREE.ARUtils.loadModel({
     objPath: OBJ_PATH,
@@ -268,11 +270,15 @@ function init() {
   var enableShootingModeRef = firebase.database().ref('enableShootingMode');
   enableShootingModeRef.on('value', function(snapshot) {
     if(snapshot.val()){
+      // shooting mode
       document.getElementById("containerARDebug").style.display = "none";
       document.getElementById("info").style.display = "none";
+      cubeGroup.visible = false;
     }else{
+      // debug mode
       document.getElementById("containerARDebug").style.display = "inline";
       document.getElementById("info").style.display = "inline";
+      cubeGroup.visible = true;
     }
   });
 
@@ -361,7 +367,7 @@ function onClick () {
   cubeClone.material = cube.material.clone(); // have own material to have own clipping planes.
   cubeClone.position.copy(pos);
   cubeClone.quaternion.copy(ori);
-  scene.add(cubeClone);
+  cubeGroup.add(cubeClone);
 
   var modelClone = model.clone();
   modelClone.position.copy(pos);
