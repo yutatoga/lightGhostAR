@@ -274,11 +274,13 @@ function init() {
       document.getElementById("containerARDebug").style.display = "none";
       document.getElementById("info").style.display = "none";
       cubeGroup.visible = false;
+      dummyPlaneMesh.material.visible = false;
     }else{
       // debug mode
       document.getElementById("containerARDebug").style.display = "inline";
       document.getElementById("info").style.display = "inline";
       cubeGroup.visible = true;
+      dummyPlaneMesh.material.visible = true;
     }
   });
 
