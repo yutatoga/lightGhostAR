@@ -123,6 +123,8 @@ var cube, cubeGroup;
 var dummyPlaneMesh;
 var globalClippingPlane;
 
+var pushRatio = 0.125;
+
 var OBJ_PATH = './assets/bunny_superLow.obj';
 // var MTL_PATH = '';
 var SCALE = 0.1;
@@ -271,6 +273,12 @@ function init() {
     light.intensity = snapshot.val();
   });
 
+  var pushRatioRef = firebase.database().ref('pushRatioRef');
+  intensityRef.on('value', function(snapshot) {
+    console.log('Firebase: pushRatioRef', snapshot.val());
+    pushRatio = snapshot.val();
+  });
+
   var enableShootingModeRef = firebase.database().ref('enableShootingMode');
   enableShootingModeRef.on('value', function(snapshot) {
     if(snapshot.val()){
@@ -351,7 +359,7 @@ function updateGlobalClippingPlane(){
 
   var push = new THREE.Vector3(0, 0, -1.0);
   push.transformDirection(dirMtx);
-  pos.addScaledVector(push, 0.125);
+  pos.addScaledVector(push, pushRatio);
 
   dummyPlaneMesh.quaternion.copy(ori);
   dummyPlaneMesh.position.copy(pos);
@@ -405,7 +413,7 @@ function onClick () {
 
   var push = new THREE.Vector3(0, 0, -1.0);
   push.transformDirection(dirMtx);
-  pos.addScaledVector(push, 0.125);
+  pos.addScaledVector(push, pushRatio);
 
   // Clone our cube object and place it at the camera's current position
   var cubeClone = cube.clone();
