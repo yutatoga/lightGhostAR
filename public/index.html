@@ -121,6 +121,7 @@ var renderer;
 var light;
 var cube, cubeGroup;
 var dummyPlaneMesh;
+var globalClippingPlane;
 
 var OBJ_PATH = './assets/bunny_superLow.obj';
 // var MTL_PATH = '';
@@ -173,6 +174,9 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
   renderer.localClippingEnabled = true;
+
+  globalClippingPlane = new THREE.Plane();
+  renderer.clippingPlanes = [globalClippingPlane];
 
   canvas = renderer.domElement;
   document.getElementById('containerWebGLRenderer').appendChild(canvas);
@@ -312,6 +316,8 @@ function update() {
   // Update our perspective camera's positioning
   vrControls.update();
 
+  updateGlobalClippingPlane();
+
   // Render our three.js virtual scene
   renderer.clearDepth();
   renderer.render(scene, camera);
@@ -320,6 +326,43 @@ function update() {
   // when a new VRDisplay frame is rendered
   vrDisplay.requestAnimationFrame(update);
 }
+
+function updateGlobalClippingPlane(){
+  // Fetch the pose data from the current frame
+  var pose = vrFrameData.pose;
+
+  // Convert the pose orientation and position into
+  // THREE.Quaternion and THREE.Vector3 respectively
+  var ori = new THREE.Quaternion(
+    pose.orientation[0],
+    pose.orientation[1],
+    pose.orientation[2],
+    pose.orientation[3]
+  );
+
+  var pos = new THREE.Vector3(
+    pose.position[0],
+    pose.position[1],
+    pose.position[2]
+  );
+
+  var dirMtx = new THREE.Matrix4();
+  dirMtx.makeRotationFromQuaternion(ori);
+
+  var push = new THREE.Vector3(0, 0, -1.0);
+  push.transformDirection(dirMtx);
+  pos.addScaledVector(push, 0.125);
+
+  dummyPlaneMesh.quaternion.copy(ori);
+  dummyPlaneMesh.position.copy(pos);
+
+  var coplanarPointA = dummyPlaneMesh.geometry.vertices[0].clone().applyQuaternion(dummyPlaneMesh.quaternion).add(dummyPlaneMesh.position);
+  var coplanarPointB = dummyPlaneMesh.geometry.vertices[1].clone().applyQuaternion(dummyPlaneMesh.quaternion).add(dummyPlaneMesh.position);
+  var coplanarPointC = dummyPlaneMesh.geometry.vertices[2].clone().applyQuaternion(dummyPlaneMesh.quaternion).add(dummyPlaneMesh.position);
+
+  globalClippingPlane.setFromCoplanarPoints(coplanarPointA, coplanarPointB, coplanarPointC); // counter-clockwise
+}
+
 
 /**
  * On window resize, update the perspective camera's aspect ratio,
