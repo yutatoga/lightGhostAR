@@ -175,7 +175,6 @@ function init() {
   console.log('setRenderer size', window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
-  renderer.localClippingEnabled = true;
 
   globalClippingPlane = new THREE.Plane();
   renderer.clippingPlanes = [globalClippingPlane];
@@ -267,6 +266,12 @@ function init() {
   canvas.addEventListener('touchstart', onClick, false);
 
   // firebase
+  var localClippingEnabledRef = firebase.database().ref('localClippingEnabled');
+  localClippingEnabledRef.on('value', function(snapshot) {
+    console.log('Firebase: localClippingEnabled', snapshot.val());
+    renderer.localClippingEnabled = snapshot.val();
+  });
+
   var intensityRef = firebase.database().ref('light/intensity');
   intensityRef.on('value', function(snapshot) {
     console.log('Firebase: light/intensity', snapshot.val());
